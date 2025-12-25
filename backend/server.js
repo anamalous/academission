@@ -21,11 +21,6 @@ connectDB();
 app.use(express.json());
 app.get('/', (req, res) => {res.send('AcademiaLink API is running...');});
 
-const allowedOrigins = [
-    'http://localhost:3000', 
-    'https://academialink.netlify.app'
-];
-
 app.use(cors({
     origin: process.env.FRONTEND_URL || "http://localhost:3000",
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
