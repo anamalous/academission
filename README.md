@@ -1,4 +1,4 @@
-![Build Status](https://github.com/anamalous/academission/actions/workflows/main.yml/badge.gif)
+[![Academission CI/CD](https://github.com/anamalous/academission/actions/workflows/main.yml/badge.svg)](https://github.com/anamalous/academission/actions/workflows/main.yml)
 
 # Academission 🎓
 A containerized academic social network and writing platform.
