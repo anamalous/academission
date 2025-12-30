@@ -1,5 +1,3 @@
-// src/components/common/Loader.js
-import React from 'react';
 import './common.css';
 
 const Loader = ({ message = "Loading..." }) => (

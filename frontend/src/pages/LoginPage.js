@@ -45,7 +45,7 @@ const LoginPage = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: '400px', margin: 'auto' }}>
-      <h2>Login to AcademiaLink</h2>
+      <h2>Login to Acade-Mission</h2>
       {error && <p style={{ color: 'red' }}>{error}</p>}
       
       <form onSubmit={submitHandler}>
