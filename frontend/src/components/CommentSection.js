@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import API from '../api/axios';
 import { useAuth } from '../context/AuthContext';
-import UserBadge from './common/UserBadge';
 
 const CommentSection = ({ postId, initialComments, subjectCreatorId }) => {
   const { user } = useAuth();

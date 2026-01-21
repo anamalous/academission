@@ -14,7 +14,7 @@ const Sidebar = () => {
       try {
         var { data } = await API.get(`/subjects`);
         console.log(user.subscriptions);
-        if(user.role=="teacher")
+        if(user.role==="teacher")
           data=data.filter(item => user?.subscriptions?.includes(item._id));
         setSubjects(data);
         setLoading(false);
