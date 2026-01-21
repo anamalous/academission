@@ -24,7 +24,7 @@ const Sidebar = () => {
       }
     };
     fetchSubjects();
-  }, []);
+  }, [user.role,user.subscriptions]);
 
   const handleJoinToggle = async (subjectId) => {
     if (!user) return alert("Please log in to join subjects!");

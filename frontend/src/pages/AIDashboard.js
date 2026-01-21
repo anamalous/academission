@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom'
 import API from '../api/axios';
 
-const AIDashboard = ({ }) => {
+const AIDashboard = () => {
   const [stats, setStats] = useState({ Positive: 0, Negative: 0, Neutral: 0, Doubt: 0 });
   const [doubts, setDoubts] = useState([]);
   const navigate = useNavigate();
