@@ -14,13 +14,14 @@ const UserSchema = new mongoose.Schema({
     dateOfBirth: {type: Date},
     location: {type: String,trim: true,},
     subscriptions: [{type: mongoose.Schema.Types.ObjectId,ref: 'Subject'}],
-    role: {type: String,enum: ['user', 'admin'],default: 'user'},
+    role: {type: String,enum: ['user', 'admin', 'teacher'],default: 'user'},
     warnings: [{message: String,adminReason: String,date: {type: Date,default: Date.now}}],
     reports: [{
         reportedBy: {type: mongoose.Schema.Types.ObjectId, ref: 'User'},
         at: {type: Date, default: Date.now}
     }],
-    lastLogin: {type: Date,default: Date.now}
+    lastLogin: {type: Date,default: Date.now},
+    verifiedCount: {type:Number, default:0}
 }, {timestamps: true});
 UserSchema.pre('save', async function () {
     if (!this.isModified('password'))return;

@@ -12,7 +12,10 @@ const Sidebar = () => {
   useEffect(() => {
     const fetchSubjects = async () => {
       try {
-        const { data } = await API.get(`/subjects`);
+        var { data } = await API.get(`/subjects`);
+        console.log(user.subscriptions);
+        if(user.role=="teacher")
+          data=data.filter(item => user?.subscriptions?.includes(item._id));
         setSubjects(data);
         setLoading(false);
       } catch (err) {
@@ -44,18 +47,23 @@ const Sidebar = () => {
           return (
             <li key={subject._id} style={listItemStyle}>
               <Link to={`/subjects/${subject._id}`} style={linkStyle}>📚 {subject.name}</Link>
-              <button onClick={() => handleJoinToggle(subject._id)}
+              {user?.role === 'user' && (<button onClick={() => handleJoinToggle(subject._id)}
                 style={{
                   ...joinButtonStyle,
                   backgroundColor: isSubscribed ? '#4CAF50' : '#3f51b5'
                 }}
               >
                 {isSubscribed ? 'Joined' : 'Join'}
-              </button>
+              </button>)}
             </li>
           );
         })}
       </ul>
+      {user?.role === 'teacher' && (
+        <Link to="/create-subject" style={createBtnStyle}>
+          + Create New Subject
+        </Link>
+      )}
     </aside>
   );
 };
@@ -90,6 +98,19 @@ const joinButtonStyle = {
   border: 'none',
   borderRadius: '4px',
   cursor: 'pointer'
+};
+
+const createBtnStyle = { 
+  display: 'block', 
+  marginBottom: '20px', 
+  padding: '10px', 
+  background: '#28a745', 
+  color: 'white', 
+  textAlign: 'center', 
+  borderRadius: '4px', 
+  textDecoration: 'none', 
+  fontWeight: 'bold',
+  fontSize: '0.9rem' 
 };
 
 export default Sidebar;

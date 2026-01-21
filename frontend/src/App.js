@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/NavBar';
 import ProtectedRoute from './components/ProtectedRoute';
+import AIDashboard from './pages/AIDashboard';
 
 import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
@@ -14,6 +15,7 @@ import Profile from './pages/Profile';
 import AdminDashboard from './pages/AdminDashboard';
 import Inbox from './pages/Inbox';
 import FloatingActionButton from './components/CreateButton';
+import CreateSubjectPage from './pages/CreateSubjectPage';
 
 
 function App() {
@@ -33,6 +35,8 @@ function App() {
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/create-post" element={<CreatePostPage />} />
             <Route path="/inbox" element={<Inbox />} />
+            <Route path="/create-subject" element={<CreateSubjectPage />}/>
+            <Route path="/subject/:id/dashboard" element={<AIDashboard />} />
           </Route>
         </Routes>
       </main>

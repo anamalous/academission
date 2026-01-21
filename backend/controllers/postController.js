@@ -1,7 +1,8 @@
 const Post = require('../models/postschema');
 const Subject = require('../models/subjectschema');
 const User = require('../models/userschema');
-const Comment = require('../models/commentschema')
+const Comment = require('../models/commentschema');
+const {analyzeSentiment} = require('../utils/aiService.js');
 
 // GET
 const getPosts = async (req, res) => {
@@ -17,7 +18,7 @@ const getPosts = async (req, res) => {
       else
         return res.json([]);
     }
-    const posts = await Post.find(query).populate('author', 'username name').populate('subject', 'name').sort({ createdAt: -1 });
+    const posts = await Post.find(query).populate('author', 'username name verifiedCount').populate('subject', 'name creator tags').sort({ createdAt: -1 });
     for (let post of posts) { post.commentCount = await Comment.countDocuments({ post: post._id }); }
     res.json(posts);
   } catch (error) { res.status(500).json({ message: error.message }); }
@@ -25,8 +26,8 @@ const getPosts = async (req, res) => {
 const getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
-      .populate('author', 'username name')
-      .populate('subject', 'name slug');
+      .populate('author', 'username name verifiedCount')
+      .populate('subject', 'name creator tags');
     if (post) { res.status(200).json(post); }
     else { res.status(404).json({ message: 'Post not found.' }); }
   } catch (error) {
@@ -36,14 +37,14 @@ const getPostById = async (req, res) => {
 
 // POST 
 const createPost = async (req, res) => {
-  const { title, content, subject } = req.body;
+  const { title, content, subject, tags } = req.body;
   const author = req.user._id;
   if (!title || !content || !subject) { return res.status(400).json({ message: 'Please include a title, content, and subject ID.' }); }
   try {
     const subjectExists = await Subject.findById(subject);
     if (!subjectExists) { return res.status(404).json({ message: 'Subject not found.' }); }
-
-    const post = await Post.create({ title, content, subject, author });
+    const vibe = await analyzeSentiment(title+content);
+    const post = await Post.create({ title, content, subject, author, tags: tags || [], sentiment: vibe });
 
     res.status(201).json({ message: 'Post created successfully', post });
   } catch (error) { res.status(500).json({ message: 'Failed to create post', details: error.message }); }

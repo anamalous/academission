@@ -3,11 +3,11 @@ import { useAuth } from '../context/AuthContext';
 
 const FloatingActionButton = () => {
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth();
+  const { user,isAuthenticated } = useAuth();
   const location = useLocation();
 
   const hideOnPaths = ['/login', '/register', '/create-post'];
-  if (!isAuthenticated || hideOnPaths.includes(location.pathname)) {
+  if (!isAuthenticated || hideOnPaths.includes(location.pathname) || user.role!=='user') {
     return null;
   }
 

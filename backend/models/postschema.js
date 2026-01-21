@@ -12,7 +12,11 @@ const PostSchema = new mongoose.Schema({
     upvotes: [{type: mongoose.Schema.Types.ObjectId,ref: 'User'}],
     downvotes: [{type: mongoose.Schema.Types.ObjectId,ref: 'User'}],
     voteScore: {type: Number,default: 0},
-    commentsCount: {type: Number,default: 0,}
+    commentsCount: {type: Number,default: 0,},
+    isPinned: {type: Boolean, default: false },
+    tags: [{type: String}], 
+    sentiment: { type: String,enum: ['Positive', 'Negative', 'Neutral', 'Doubt'],default: 'Neutral'},
+    urgency: { type: Number, default: 1 }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Post', PostSchema);

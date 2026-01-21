@@ -95,7 +95,7 @@ const PostDetails = () => {
         )}
       </div>
 
-      <CommentSection postId={post._id} initialComments={comments} />
+      <CommentSection postId={post._id} initialComments={comments} subjectCreatorId={post.subject.creator} />
     </div>
   );
 };

@@ -6,13 +6,14 @@ import Loader from '../components/common/Loader';
 import ErrorDisplay from '../components/common/ErrorDisplay';
 
 const CreatePostPage = () => {
-  const [selectedSubject, setSelectedSubject] = useState('');
+  const [selectedSubject, setSelectedSubject] = useState({});
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetchingSubjects, setFetchingSubjects] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedTags, setSelectedTags] = useState([]);
 
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -24,7 +25,7 @@ const CreatePostPage = () => {
         const mySubjects = data.filter(sub => user.subscriptions.includes(sub._id));
         setSubjects(mySubjects);
 
-        if (mySubjects.length > 0) setSelectedSubject(mySubjects[0]._id);
+        if (mySubjects.length > 0) setSelectedSubject(mySubjects[0]);
       } catch (err) {
         console.error("Could not load subjects", err);
       } finally {
@@ -35,12 +36,20 @@ const CreatePostPage = () => {
     if (user) fetchSubjects();
   }, [user]);
 
+  const toggleTag = (tag) => {
+    if (selectedTags.includes(tag)) {
+      setSelectedTags(selectedTags.filter(t => t !== tag));
+    } else {
+      setSelectedTags([...selectedTags, tag]);
+    }
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
-    if (!selectedSubject) {setError("Please select a subject first.");return;}
+    if (!selectedSubject) { setError("Please select a subject first."); return; }
     setLoading(true);
     try {
-      await API.post('/posts', { title, content, subject: selectedSubject });
+      await API.post('/posts', { title, content, subject: selectedSubject, tags:selectedTags });
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create post');
@@ -68,9 +77,14 @@ const CreatePostPage = () => {
 
           <div style={selectWrapper}>
             <select
-              value={selectedSubject}
+              value={selectedSubject._id||""}
               style={modularSelectStyle}
-              onChange={(e) => setSelectedSubject(e.target.value)}
+              onChange={(e) => {
+                  const sub=subjects.find(item => item._id === e.target.value);
+                  setSelectedSubject(sub);
+                  setSelectedTags([]);
+                }
+              }
               required
             >
               <option value="" disabled>Select Subject</option>
@@ -93,6 +107,19 @@ const CreatePostPage = () => {
           style={contentAreaStyle}
         />
 
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', margin: '15px 0' }}>
+          {selectedSubject?.tags.map(tag => (
+            <div
+              key={tag}
+              onClick={() => toggleTag(tag)}
+              style={{
+                ...tagPillStyle,
+                backgroundColor: selectedTags.includes(tag) ? '#003366' : '#e0e0e0',
+                color: selectedTags.includes(tag) ? 'white' : 'black',
+              }}
+            >{tag}</div>
+          ))}
+        </div>
         {error && <ErrorDisplay message={error} />}
 
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px' }}>
@@ -172,8 +199,8 @@ const buttonStyle = {
 
 const modularSelectStyle = {
   appearance: 'none',
-  border: 'none', 
-  backgroundColor: '#eef2ff', 
+  border: 'none',
+  backgroundColor: '#eef2ff',
   color: '#3730a3',
   padding: '6px 35px 6px 15px',
   borderRadius: '20px',
@@ -184,5 +211,7 @@ const modularSelectStyle = {
   transition: 'all 0.2s ease',
   fontFamily: 'inherit',
 };
+
+const tagPillStyle = { background: '#f0f4f8', color: '#003366', padding: '6px 12px', borderRadius: '20px', fontSize: '0.9rem', border: '1px solid #d1d9e6', display: 'flex', alignItems: 'center' };
 
 export default CreatePostPage;

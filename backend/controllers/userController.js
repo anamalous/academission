@@ -18,7 +18,7 @@ const getUserProfile = async (req, res) => {
 
 // POST
 const registerUser = async (req, res) => {
-  const {username,email,password,name,location,dateOfBirth,bio} = req.body;
+  const {username,email,password,name,location,dateOfBirth,bio,role} = req.body;
   try {
     const emailHost = email.split('@')[1];
     const isWhitelisted = await Domain.findOne({ host: emailHost });
@@ -30,7 +30,7 @@ const registerUser = async (req, res) => {
     }
     const userExists = await User.findOne({email});
     if (userExists) return res.status(400).json({ message: 'User already exists' });
-    const user = await User.create({username,email,password,name,bio:bio,location:location,dateOfBirth:dateOfBirth});
+    const user = await User.create({username,email,password,name,bio:bio,location:location,dateOfBirth:dateOfBirth,role:role});
     if (user) {
       res.status(201).json({
         _id: user._id,
@@ -60,7 +60,8 @@ const authUser = async (req, res) => {
       subscriptions: user.subscriptions,
       role: user.role,
       lastSeen: prevLogin,
-      warnings: user.warnings
+      warnings: user.warnings,
+      verifiedCount: user.verifiedCount
     });
   } else {
     res.status(401).json({ message: 'Invalid email or password' });

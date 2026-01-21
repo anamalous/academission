@@ -1,4 +1,5 @@
 const Comment = require('../models/commentschema');
+const User = require('../models/userschema');
 
 //GET
 const getCommentsByPost = async (req, res) => {
@@ -27,6 +28,25 @@ const addComment = async (req, res) => {
   }
 };
 
+//PUT
+const verifyComment = async (req, res) => {
+  const comment = await Comment.findById(req.params.commentId).populate('author');
+  if (!comment) {
+    res.status(404);
+    throw new Error('Comment not found');
+  }
+
+  comment.isVerified = !comment.isVerified;
+  await comment.save();
+
+  const increment = comment.isVerified ? 1 : -1;
+  await User.findByIdAndUpdate(comment.author._id, {
+    $inc: { verifiedCount: increment }
+  });
+
+  res.status(200).json(comment);
+};
+
 // DELETE
 const deleteComment = async (req, res) => {
   try {
@@ -42,4 +62,4 @@ const deleteComment = async (req, res) => {
 
 
 
-module.exports = {addComment, getCommentsByPost, deleteComment};
+module.exports = {addComment, getCommentsByPost, deleteComment, verifyComment};

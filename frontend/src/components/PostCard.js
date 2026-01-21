@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 import API from '../api/axios';
+import UserBadge from './common/UserBadge';
 
 const PostCard = ({ post }) => {
 
@@ -14,6 +15,8 @@ const PostCard = ({ post }) => {
 
   const canDelete = user && (user.role === 'admin');
   const posted=new Date(post.createdAt);
+
+  console.log(post.author.verifiedCount);
 
   const handleDelete = async () => {
     if (window.confirm("Admin Action: Delete this post permanently?")) {
@@ -51,11 +54,17 @@ const PostCard = ({ post }) => {
         <h3>{post.title}</h3>
       </Link>
       <p style={authorSec}>
+        <UserBadge count={post?.author?.verifiedCount || 0} />
         <Link to={`/profile/${post.author._id}`} style={{ color: 'inherit', fontWeight: 'bold' }}>
           {post.author.username}
         </Link> @ {post.subject.name}
       </p>
       <p>{post.content.substring(0, 100)}...</p>
+      <div style={{ display: 'flex', gap: '5px', marginTop: '10px' }}>
+        {post.tags.map(tag => (
+          <span key={tag} style={smallTagStyle}>#{tag}</span>
+        ))}
+      </div>
       <div style={actionBar}>
         <div style={{justifyContent:'space-between', display:'flex', alignItems:'center', width:'100%'}}>
           <div style={horizontalVoteBox}>
@@ -138,6 +147,19 @@ const adminDelBtnStyle = {
 const authorSec = {
   fontSize: '15px',
   color: 'grey'
-}
+};
+
+const smallTagStyle = {
+  fontSize: '11px',
+  fontWeight: '600',
+  color: '#005bb7',     
+  background: '#e6f2ff', 
+  padding: '3px 10px',
+  borderRadius: '12px',
+  border: '1px solid #cce3ff',
+  display: 'inline-block',
+  textTransform: 'uppercase',
+  letterSpacing: '0.5px'
+};
 
 export default PostCard;
